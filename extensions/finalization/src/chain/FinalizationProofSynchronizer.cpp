@@ -50,8 +50,12 @@ namespace catapult { namespace chain {
 			NodeInteractionFuture operator()(const api::RemoteProofApi& api) {
 				auto localFinalizedHeight = m_proofStorage.view().statistics().Height;
 				auto requestEpoch = calculateRequestEpoch(localFinalizedHeight);
-				if (FinalizationEpoch() == requestEpoch)
+				if (FinalizationEpoch() == requestEpoch) {
+					CATAPULT_LOG(debug)
+							<< "<FIN:debug> skipping proof pull; req = " << requestEpoch
+							<< ", local = " << localFinalizedHeight;
 					return thread::make_ready_future(ionet::NodeInteractionResultCode::Neutral);
+				}
 
 				auto startFuture = thread::compose(
 					api.finalizationStatistics(),
@@ -69,8 +73,10 @@ namespace catapult { namespace chain {
 				return startFuture.then([&proofStorage, proofValidator, localFinalizedHeight, requestEpoch](auto&& proofFuture) {
 					try {
 						auto pProof = proofFuture.get();
-						if (!pProof)
+						if (!pProof) {
+							CATAPULT_LOG(debug) << "<FIN:debug> could not receive proof at " << requestEpoch;
 							return ionet::NodeInteractionResultCode::Neutral;
+						}
 
 						CATAPULT_LOG(debug) << "peer returned proof for round " << pProof->Round << " at height " << pProof->Height;
 

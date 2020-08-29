@@ -44,11 +44,17 @@ namespace catapult { namespace mongo {
 			MongoFinalizationStorage(MongoStorageContext& context)
 					: m_context(context)
 					, m_database(m_context.createDatabaseConnection())
-					, m_errorPolicy(m_context.createCollectionErrorPolicy(Collection_Name))
-			{}
+					, m_errorPolicy(m_context.createCollectionErrorPolicy(Collection_Name)) {
+				CATAPULT_LOG(debug) << "<FIN> creating MongoFinalizationStorage";
+			}
 
 		public:
 			void notifyFinalizedBlock(const model::FinalizationRound& round, Height height, const Hash256& hash) override {
+				CATAPULT_LOG(important)
+						<< "<FIN> (mongo) saving proof: round = " << round
+						<< ", height = " << height
+						<< ", hash = " << hash;
+
 				auto blocks = m_database[Collection_Name];
 				auto dbFinalizedBlock = mappers::ToDbModel(round, height, hash);
 
