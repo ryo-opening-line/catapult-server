@@ -30,7 +30,6 @@
 #include "tests/TestHarness.h"
 #include <unordered_set>
 #include <vector>
-#include <zmq_addon.hpp>
 
 namespace catapult {
 	namespace model {
@@ -131,7 +130,7 @@ namespace catapult { namespace test {
 						GetDefaultLocalHostZmqPort(),
 						model::CreateNotificationPublisher(m_registry, UnresolvedMosaicId())))
 				, m_zmqSocket(m_zmqContext, ZMQ_SUB) {
-			m_zmqSocket.setsockopt(ZMQ_RCVTIMEO, 10);
+			m_zmqSocket.set(zmq::sockopt::rcvtimeo, 10);
 			m_zmqSocket.connect("tcp://localhost:" + std::to_string(GetDefaultLocalHostZmqPort()));
 		}
 
@@ -139,7 +138,8 @@ namespace catapult { namespace test {
 		/// Subscribes to \a topic.
 		template<typename TTopic>
 		void subscribe(TTopic topic) {
-			m_zmqSocket.setsockopt(ZMQ_SUBSCRIBE, &topic, sizeof(TTopic));
+			auto topicBuffer = zmq::const_buffer(reinterpret_cast<const void*>(&topic), sizeof(TTopic));
+			m_zmqSocket.set(zmq::sockopt::subscribe, topicBuffer);
 
 			// make an additional subscription and wait until messages can be received
 			waitForReceiveSuccess();
@@ -171,7 +171,9 @@ namespace catapult { namespace test {
 		void waitForReceiveSuccess() {
 			constexpr uint8_t Max_Attempts = 20;
 			auto marker = zeromq::BlockMarker::Drop_Blocks_Marker;
-			m_zmqSocket.setsockopt(ZMQ_SUBSCRIBE, &marker, sizeof(zeromq::BlockMarker));
+			auto topicBuffer = zmq::const_buffer(reinterpret_cast<const void*>(&marker), sizeof(zeromq::BlockMarker));
+			m_zmqSocket.set(zmq::sockopt::subscribe, topicBuffer);
+
 			auto receiveSuccess = false;
 			auto counter = 0u;
 			zmq::multipart_t message;

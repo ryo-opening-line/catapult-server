@@ -64,7 +64,7 @@ namespace catapult { namespace zeromq {
 				, m_pPool(thread::CreateIoThreadPool(1, "ZeroMqEntityPublisher")) {
 			// note that we want closing the socket to be synchronous
 			// setting linger to 0 means that all pending messages are discarded and the socket is closed immediately
-			m_zmqSocket.setsockopt(ZMQ_LINGER, 0);
+			m_zmqSocket.set(zmq::sockopt::linger, 0);
 			m_zmqSocket.bind("tcp://*:" + std::to_string(port));
 
 			m_pPool->start();
