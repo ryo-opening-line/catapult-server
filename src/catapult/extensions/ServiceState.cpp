@@ -51,27 +51,4 @@ namespace catapult { namespace extensions {
 				? state.hooks().networkFinalizedHeightHashPairSupplier()
 				: CreateLocalFinalizedHeightHashPairSupplier(state);
 	}
-
-	SelectorSettings CreateOutgoingSelectorSettings(
-			const ServiceState& state,
-			ionet::ServiceIdentifier serviceId,
-			ionet::NodeRoles requiredRole) {
-		return SelectorSettings(
-				state.cache(),
-				state.config().BlockChain.TotalChainImportance,
-				state.nodes(),
-				serviceId,
-				MapNodeRolesToIpProtocols(state.config().Node.Local.Roles),
-				requiredRole,
-				state.config().Node.OutgoingConnections);
-	}
-
-	SelectorSettings CreateIncomingSelectorSettings(const ServiceState& state, ionet::ServiceIdentifier serviceId) {
-		return SelectorSettings(
-			state.cache(),
-			state.config().BlockChain.TotalChainImportance,
-			state.nodes(),
-			serviceId,
-			state.config().Node.IncomingConnections);
-	}
 }}

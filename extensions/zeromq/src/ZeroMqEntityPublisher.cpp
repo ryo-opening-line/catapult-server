@@ -59,7 +59,7 @@ namespace catapult { namespace zeromq {
 
 	class ZeroMqEntityPublisher::SynchronizedPublisher {
 	public:
-		SynchronizedPublisher(const std::string& listenInterface, unsigned short port)
+		SynchronizedPublisher(const std::string&, unsigned short port)
 				: m_zmqSocket(m_zmqContext, ZMQ_PUB)
 				, m_pPool(thread::CreateIoThreadPool(1, "ZeroMqEntityPublisher")) {
 			// note that we want closing the socket to be synchronous

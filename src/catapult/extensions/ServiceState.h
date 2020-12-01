@@ -240,14 +240,5 @@ namespace catapult { namespace extensions {
 	/// \note Result is *NOT* guaranteed to be in local block chain storage.
 	supplier<model::HeightHashPair> CreateNetworkFinalizedHeightHashPairSupplier(const ServiceState& state);
 
-	/// Creates outgoing selector settings based on \a state for \a serviceId and \a requiredRole.
-	SelectorSettings CreateOutgoingSelectorSettings(
-			const ServiceState& state,
-			ionet::ServiceIdentifier serviceId,
-			ionet::NodeRoles requiredRole);
-
-	/// Creates incoming selector settings based on \a state for \a serviceId.
-	SelectorSettings CreateIncomingSelectorSettings(const ServiceState& state, ionet::ServiceIdentifier serviceId);
-
 	// endregion
 }}
