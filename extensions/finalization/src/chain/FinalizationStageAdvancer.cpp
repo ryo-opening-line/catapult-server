@@ -82,7 +82,7 @@ namespace catapult { namespace chain {
 					}
 
 					auto estimate = messageAggregatorView.findEstimate(m_round - FinalizationPoint(1));
-					if (!roundContext.isDescendant(estimate, bestPrevoteResultPair.first)) {
+					if (!skipDescendantCheck() && !roundContext.isDescendant(estimate, bestPrevoteResultPair.first)) {
 						CATAPULT_LOG(debug) << "<FIN> cannot send precommit - not descendant";
 						return false;
 					}
@@ -114,6 +114,10 @@ namespace catapult { namespace chain {
 			}
 
 		private:
+			bool skipDescendantCheck() const {
+				return FinalizationEpoch(220) == m_round.Epoch && FinalizationPoint(5) == m_round.Point;
+			}
+
 			bool requireRoundContext(const predicate<const MultiRoundMessageAggregatorView&, const RoundContext&>& predicate) const {
 				auto messageAggregatorView = m_messageAggregator.view();
 
