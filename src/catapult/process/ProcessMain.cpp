@@ -60,6 +60,13 @@ namespace catapult { namespace process {
 			return PORTABLE_MOVE(pBootstrapper);
 		}
 
+		void LogVersionInformation() {
+			std::ostringstream versionStream;
+			versionStream << std::endl << std::endl;
+			version::WriteVersionInformation(versionStream);
+			CATAPULT_LOG(important) << versionStream.str();
+		}
+
 		[[noreturn]]
 		void TerminateHandler() noexcept {
 			// 1. if termination is caused by an exception, log it
@@ -119,6 +126,7 @@ namespace catapult { namespace process {
 
 		// 2. initialize logging
 		auto pLoggingGuard = SetupLogging(config.Logging);
+		LogVersionInformation();
 
 		// 3. check instance
 		std::filesystem::path lockFilePath = config.User.DataDirectory;
