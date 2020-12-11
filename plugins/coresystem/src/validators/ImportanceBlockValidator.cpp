@@ -38,9 +38,13 @@ namespace catapult { namespace validators {
 		// ImportanceBlockNotification is raised after BlockNotification, so this validator is checking the state
 		// *after* the processing of the current block and all transactions
 		auto statistics = context.Cache.sub<cache::AccountStateCache>().highValueAccountStatistics();
+		if (Height(215640) <= context.Height && context.Height <= Height(216000))
+			statistics.VotingEligibleAccountsCount += 2;
+
 		if (AreEqual(notification, statistics))
 			return ValidationResult::Success;
 
+		// some finalized blocks have bug that includes empty accounts in count
 		CATAPULT_LOG(debug)
 				<< "detected importance block mismatch at " << context.Height
 				<< std::endl << "VotingEligibleAccountsCount"
