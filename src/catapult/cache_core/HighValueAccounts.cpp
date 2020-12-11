@@ -135,18 +135,17 @@ namespace catapult { namespace cache {
 
 		private:
 			void updateOne(const state::AccountState& accountState, const std::pair<Amount, bool>& effectiveBalancePair) {
-				CATAPULT_LOG(warning) << " UPDATING " << accountState.Address;
 				auto accountHistoriesIter = m_accountHistories.find(accountState.Address);
 
 				// if this account has a newly high balance, start tracking it
 				if (m_accountHistories.cend() == accountHistoriesIter && effectiveBalancePair.second) {
-					CATAPULT_LOG(warning) << "+ start tracking";
+					CATAPULT_LOG(warning) << "UPDATING " << accountState.Address << " start tracking";
 					accountHistoriesIter = m_accountHistories.emplace(accountState.Address, state::AccountHistory()).first;
 				}
 
 				// if this account is tracked, add tracked values
 				if (m_accountHistories.cend() != accountHistoriesIter) {
-					CATAPULT_LOG(warning) << "+ new balance " << effectiveBalancePair.first;
+					CATAPULT_LOG(warning) << "UPDATING " << accountState.Address << "new balance " << effectiveBalancePair.first;
 					accountHistoriesIter->second.add(m_height, effectiveBalancePair.first);
 					accountHistoriesIter->second.add(m_height, accountState.SupplementalPublicKeys.vrf().get());
 					accountHistoriesIter->second.add(m_height, accountState.SupplementalPublicKeys.voting().getAll());

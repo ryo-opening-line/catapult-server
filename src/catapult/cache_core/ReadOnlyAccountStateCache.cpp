@@ -71,10 +71,11 @@ namespace catapult { namespace cache {
 				if (Amount() == balanceHistory.get())
 					continue;
 
-				CATAPULT_LOG(warning)
-						<< "ADDR " << accountHistoryPair.first
-						<< " BAL " << balanceHistory.get()
-						<< " @ " << balanceHistory.heights().back();
+				std::ostringstream out;
+				out << accountHistoryPair.first << " CUR BAL " << balanceHistory.get();
+				for (auto height : balanceHistory.heights())
+					out << std::endl << " + BAL " << balanceHistory.get(height) << " @ " << height;
+
 				++statistics.VotingEligibleAccountsCount;
 				statistics.TotalVotingBalance = statistics.TotalVotingBalance + balanceHistory.get();
 			}
