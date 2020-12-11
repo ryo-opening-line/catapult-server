@@ -282,6 +282,7 @@ namespace catapult { namespace ionet {
 				switch (extractResult) {
 				case PacketExtractResult::Success:
 					do {
+						CATAPULT_LOG(important) << "EXTRACTED " << *pExtractedPacket;
 						callback(SocketOperationCode::Success, pExtractedPacket);
 						if (!allowMultiple)
 							return;

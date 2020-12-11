@@ -152,6 +152,7 @@ namespace catapult { namespace api {
 			}
 
 			FutureType<BlocksFromTraits> blocksFrom(Height height, const BlocksFromOptions& options) const override {
+				CATAPULT_LOG(important) << " BLOCKS FROM " << height;
 				return m_impl.dispatch(BlocksFromTraits(*m_pRegistry), height, options);
 			}
 

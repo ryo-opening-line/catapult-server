@@ -35,6 +35,7 @@ namespace catapult { namespace ionet {
 		else
 			m_data.resize(std::min(m_originalSize + size, m_data.capacity()));
 
+		// CATAPULT_LOG(warning) << "> append size " << size;
 		m_appendSize = m_data.size() - m_originalSize;
 	}
 
@@ -58,6 +59,8 @@ namespace catapult { namespace ionet {
 	}
 
 	void AppendContext::commit(size_t size) {
+		// CATAPULT_LOG(warning) << "> commit size " << size;
+
 		assertNotCommitted();
 		if (size > m_appendSize)
 			CATAPULT_THROW_RUNTIME_ERROR_2("cannot commit more than reserved append size", size, m_appendSize);

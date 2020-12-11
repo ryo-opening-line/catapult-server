@@ -109,7 +109,13 @@ namespace catapult { namespace cache {
 			HighValueBalancesUpdater(AddressAccountHistoryMap& accountHistories, Height height)
 					: m_accountHistories(accountHistories)
 					, m_height(height)
-			{}
+			{
+				CATAPULT_LOG(warning) << " ORIGINAL, height " << height;
+				for (const auto& pair : m_accountHistories) {
+					const auto& history = pair.second.balance();
+					CATAPULT_LOG(warning) << " + " << pair.first << " => " << history.get() << " @ " << history.heights().back();
+				}
+			}
 
 		public:
 			void update(const MemorySetType& source, const EffectiveBalanceCalculator& effectiveBalanceCalculator) {
@@ -119,20 +125,28 @@ namespace catapult { namespace cache {
 
 			void prune(Amount minBalance) {
 				utils::map_erase_if(m_accountHistories, [minBalance](const auto& pair) {
-					return !pair.second.anyAtLeast(minBalance);
+					if (pair.second.anyAtLeast(minBalance))
+						return false;
+
+					CATAPULT_LOG(warning) << " PRUNING " << pair.first << " MIN " << minBalance;
+					return true;
 				});
 			}
 
 		private:
 			void updateOne(const state::AccountState& accountState, const std::pair<Amount, bool>& effectiveBalancePair) {
+				CATAPULT_LOG(warning) << " UPDATING " << accountState.Address;
 				auto accountHistoriesIter = m_accountHistories.find(accountState.Address);
 
 				// if this account has a newly high balance, start tracking it
-				if (m_accountHistories.cend() == accountHistoriesIter && effectiveBalancePair.second)
+				if (m_accountHistories.cend() == accountHistoriesIter && effectiveBalancePair.second) {
+					CATAPULT_LOG(warning) << "+ start tracking";
 					accountHistoriesIter = m_accountHistories.emplace(accountState.Address, state::AccountHistory()).first;
+				}
 
 				// if this account is tracked, add tracked values
 				if (m_accountHistories.cend() != accountHistoriesIter) {
+					CATAPULT_LOG(warning) << "+ new balance " << effectiveBalancePair.first;
 					accountHistoriesIter->second.add(m_height, effectiveBalancePair.first);
 					accountHistoriesIter->second.add(m_height, accountState.SupplementalPublicKeys.vrf().get());
 					accountHistoriesIter->second.add(m_height, accountState.SupplementalPublicKeys.voting().getAll());
