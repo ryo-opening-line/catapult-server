@@ -71,6 +71,10 @@ namespace catapult { namespace cache {
 				if (Amount() == balanceHistory.get())
 					continue;
 
+				CATAPULT_LOG(warning)
+						<< "ADDR " << accountHistoryPair.first
+						<< " BAL " << balanceHistory.get()
+						<< " @ " << balanceHistory.heights().back();
 				++statistics.VotingEligibleAccountsCount;
 				statistics.TotalVotingBalance = statistics.TotalVotingBalance + balanceHistory.get();
 			}
