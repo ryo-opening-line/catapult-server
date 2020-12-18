@@ -94,14 +94,20 @@ namespace catapult { namespace cache {
 		private:
 			void updateOne(const Address& address, const HighValueAccountDescriptor& descriptor) {
 				if (descriptor.IsHighValue) {
+					CATAPULT_LOG(debug) << "ADDING high value address " << address;
+
 					m_current.insert(address);
 					m_removed.erase(address);
 				} else {
+					CATAPULT_LOG(debug) << "REMOVING high value address " << address;
+
 					m_current.erase(address);
 
 					// need to check HasHistoricalInformation in order for multiblock syncs to work
-					if (m_original.cend() != m_original.find(address) || descriptor.HasHistoricalInformation)
+					if (m_original.cend() != m_original.find(address) || descriptor.HasHistoricalInformation) {
+						CATAPULT_LOG(debug) << "preserving " << address << "? " << descriptor.HasHistoricalInformation;
 						m_removed.insert(address);
+					}
 				}
 			}
 

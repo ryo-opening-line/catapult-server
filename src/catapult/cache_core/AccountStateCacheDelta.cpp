@@ -175,22 +175,36 @@ namespace catapult { namespace cache {
 
 		const auto& removedHighValueAddresses = m_highValueAccountsUpdater.removedAddresses();
 		for (const auto& address : removedHighValueAddresses) {
+			CATAPULT_LOG(debug) << "processing removed address " << address;
+
 			auto accountStateIter = find(address);
-			if (!accountStateIter.tryGet())
+			if (!accountStateIter.tryGet()) {
+				CATAPULT_LOG(debug) << "+ NOT FOUND " << address;
 				continue;
+			}
 
 			auto& accountState = accountStateIter.get();
 			auto& activityBuckets = accountState.ActivityBuckets;
 			auto currentBucket = activityBuckets.get(importanceHeight);
-			if (currentBucket.StartHeight == importanceHeight)
+			if (currentBucket.StartHeight == importanceHeight) {
+				CATAPULT_LOG(debug) << "+ POPPING " << address;
 				activityBuckets.pop();
+			}
 
 			// shift the removed account's buckets and snapshots
 			activityBuckets.push();
 			accountState.ImportanceSnapshots.push();
 
-			if (state::HasHistoricalInformation(accountState))
+			CATAPULT_LOG(debug)
+					<< "+ CLEARING " << address
+					<< ", importance " << accountState.ImportanceSnapshots.current()
+					<< " at " << accountState.ImportanceSnapshots.height()
+					<< " active? " << accountState.ImportanceSnapshots.active();
+
+			if (state::HasHistoricalInformation(accountState)) {
+				CATAPULT_LOG(debug) << "+ DROPPING (empty) " << address;
 				filteredRemovedHighValueAddresses.insert(address);
+			}
 		}
 
 		m_highValueAccountsUpdater.setRemovedAddresses(std::move(filteredRemovedHighValueAddresses));

@@ -77,11 +77,16 @@ namespace catapult { namespace importance {
 				auto targetActivityImportanceRaw = m_config.TotalChainImportance.unwrap() * m_config.ImportanceActivityPercentage / 100;
 				for (auto& accountSummary : accountSummaries) {
 					auto importance = calculateFinalImportance(accountSummary, totalActivityImportance, targetActivityImportanceRaw);
+
 					auto& accountState = *accountSummary.pAccountState;
 					FinalizeAccountActivity(importanceHeight, importance, accountState.ActivityBuckets);
 					auto effectiveImportance = model::ImportanceHeight(1) == importanceHeight
 							? importance
 							: Importance(std::min(importance.unwrap(), accountSummary.ActivitySummary.PreviousImportance.unwrap()));
+
+					CATAPULT_LOG(debug)
+							<< " CALCULATED final importance for " << accountState.Address << ", effective " << effectiveImportance
+							<< " at height " << importanceHeight;
 					accountSummary.pAccountState->ImportanceSnapshots.set(effectiveImportance, importanceHeight);
 				}
 
