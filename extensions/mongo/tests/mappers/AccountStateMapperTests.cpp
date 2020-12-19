@@ -194,7 +194,7 @@ namespace catapult { namespace mongo { namespace mappers {
 
 		template<typename TTraits>
 		void AssertCanMapAccountStateWithNoActivityBuckets() {
-			// Arrange: set an importance but no buckets
+			// Arrange:
 			state::AccountState accountState(test::GenerateRandomAddress(), Height(123));
 			accountState.ImportanceSnapshots.set(Importance(234), model::ImportanceHeight(345));
 			TTraits::ConfigureImportanceSnapshots(accountState.ImportanceSnapshots);
@@ -211,7 +211,7 @@ namespace catapult { namespace mongo { namespace mappers {
 
 		template<typename TTraits>
 		void AssertCanMapAccountStateWithActivityBuckets() {
-			// Arrange: set an importance but no buckets
+			// Arrange:
 			state::AccountState accountState(test::GenerateRandomAddress(), Height(123));
 			accountState.ImportanceSnapshots.set(Importance(234), model::ImportanceHeight(345));
 			TTraits::ConfigureImportanceSnapshots(accountState.ImportanceSnapshots);
