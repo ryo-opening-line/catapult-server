@@ -201,6 +201,17 @@ namespace catapult { namespace cache {
 					<< " at " << accountState.ImportanceSnapshots.height()
 					<< " active? " << accountState.ImportanceSnapshots.active();
 
+			for (const auto& snapshot : accountState.ImportanceSnapshots)
+				CATAPULT_LOG(debug) << " + IMP " << snapshot.Importance << " @ " << snapshot.Height;
+
+			for (const auto& bucket : accountState.ActivityBuckets) {
+				CATAPULT_LOG(debug)
+						<< " + AB { " << bucket.TotalFeesPaid
+						<< ", " << bucket.BeneficiaryCount
+						<< ", " << bucket.RawScore
+						<< " } @ " << bucket.StartHeight;
+			}
+
 			if (state::HasHistoricalInformation(accountState)) {
 				CATAPULT_LOG(debug) << "+ DROPPING (empty) " << address;
 				filteredRemovedHighValueAddresses.insert(address);

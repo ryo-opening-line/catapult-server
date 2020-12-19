@@ -88,6 +88,17 @@ namespace catapult { namespace importance {
 							<< " CALCULATED final importance for " << accountState.Address << ", effective " << effectiveImportance
 							<< " at height " << importanceHeight;
 					accountSummary.pAccountState->ImportanceSnapshots.set(effectiveImportance, importanceHeight);
+
+					for (const auto& snapshot : accountSummary.pAccountState->ImportanceSnapshots)
+						CATAPULT_LOG(debug) << " + IMP " << snapshot.Importance << " @ " << snapshot.Height;
+
+					for (const auto& bucket : accountSummary.pAccountState->ActivityBuckets) {
+						CATAPULT_LOG(debug)
+								<< " + AB { " << bucket.TotalFeesPaid
+								<< ", " << bucket.BeneficiaryCount
+								<< ", " << bucket.RawScore
+								<< " } @ " << bucket.StartHeight;
+					}
 				}
 
 				CATAPULT_LOG(debug)
