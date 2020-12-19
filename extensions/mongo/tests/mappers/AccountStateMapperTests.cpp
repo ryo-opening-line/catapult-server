@@ -32,8 +32,6 @@ namespace catapult { namespace mongo { namespace mappers {
 
 #define TEST_CLASS AccountStateMapperTests
 
-	// region ToDbModel
-
 	namespace {
 		// region test utils
 
