@@ -88,8 +88,8 @@ namespace catapult { namespace mongo { namespace mappers {
 		void StreamAccountImportanceSnapshots(bson_stream::document& builder, const state::AccountImportanceSnapshots& snapshots) {
 			auto importancesArray = builder << "importances" << bson_stream::open_array;
 			for (const auto& snapshot : snapshots) {
-				if (model::ImportanceHeight(0) == snapshot.Height)
-					break;
+				// if (model::ImportanceHeight(0) == snapshot.Height)
+				// 	break;
 
 				importancesArray
 						<< bson_stream::open_document
@@ -104,8 +104,8 @@ namespace catapult { namespace mongo { namespace mappers {
 		void StreamAccountActivityBuckets(bson_stream::document& builder, const state::AccountActivityBuckets& buckets) {
 			auto activityBucketsArray = builder << "activityBuckets" << bson_stream::open_array;
 			for (const auto& bucket : buckets) {
-				if (model::ImportanceHeight(0) == bucket.StartHeight)
-					break;
+				// if (model::ImportanceHeight(0) == bucket.StartHeight)
+				// 	break;
 
 				activityBucketsArray
 						<< bson_stream::open_document
